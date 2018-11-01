@@ -53,9 +53,11 @@ export function graphqlLambda(
       ({ graphqlResponse, responseInit }) => {
         let graphqlResponseJson = JSON.parse(graphqlResponse);
         if(graphqlResponseJson.errors != undefined) {
-          graphqlResponseJson.code = "error";
-          graphqlResponse = JSON.stringify(graphqlResponseJson);
-          callback(graphqlResponse);
+          callback(null, {
+              body: graphqlResponse,
+              statusCode: 429,
+              headers: responseInit.headers,
+          });
         } else {
         callback(null, {
             body: graphqlResponse,
