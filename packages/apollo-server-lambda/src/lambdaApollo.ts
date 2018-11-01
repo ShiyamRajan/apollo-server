@@ -51,10 +51,18 @@ export function graphqlLambda(
       },
     }).then(
       ({ graphqlResponse, responseInit }) => {
+        let graphqlResponseJson = JSON.parse(graphqlResponse);
+        if(graphqlResponseJson.errors != undefined) {
+          callback(null, {
+              body: graphqlResponse,
+              statusCode: 429,
+              headers: responseInit.headers,
+          });
+        } else {
         callback(null, {
-          body: graphqlResponse,
-          statusCode: 200,
-          headers: responseInit.headers,
+            body: graphqlResponse,
+            statusCode: 200,
+            headers: responseInit.headers,
         });
       },
       (error: HttpQueryError) => {
